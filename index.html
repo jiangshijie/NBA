@@ -5,6 +5,32 @@
     <title>Title</title>
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <style>
+        .domain {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+            font: 10px sans-serif;
+        }
+        .domain text {
+            font: 10px sans-serif;
+        }
+        .selecting path {
+            fill-opacity: .2;
+        }
+
+        .selecting path.selected {
+            stroke: #f00;
+            stroke-width: 2px;
+        }
+        .brush .extent {
+            stroke: #fff;
+            fill-opacity: .125;
+            shape-rendering: crispEdges;
+        }
+
+
+    </style>
 </head>
 <body>
 
@@ -97,7 +123,6 @@
                         }
                     });
 //                    .on("click", stateClick);
-
             //Load in NBA teams data
             d3.csv("NBA-teams.csv", function(data) {
                 //Map the rank to radius[2, 20]
@@ -149,6 +174,82 @@
                             return d.abb;});
             });
         });
+    });
+//change the position of the bar chart at end; Start to draw barChart/
+    var bar = d3.select("svg").append("g").attr("transform","translate(" + margin.left + ", " + 500 + ")");
+    var x=d3.scale.ordinal().rangeRoundBands([0,900],.2);;
+    var y=d3.scale.linear() .range([200, 0]);
+    var xAxis = d3.svg.axis().scale(x).tickValues(x.domain()).orient("bottom");
+    //var yAxis = d3.svg.axis().scale(y).orient("left");
+
+
+    d3.csv("data.csv", function(d){
+        d.PLUS_MINUS = +d.PLUS_MINUS;
+        var date = d.GAME_DATE.split("/");
+        d.GAME_DATE = new Date(date[0], date[1],date[2]);
+        return d}, function(error,data) {
+            if (error) throw error;
+
+        var key = "GSW";
+        var value = d3.nest().key(function(d){return d.TEAM_ABBREVIATION}).entries(data);
+        for (var i = 0; i < value.length; i++) {
+            if (value[i].key == key) {
+                value = value[i].values;
+            }
+        }
+        //console.log("data");
+        //console.log(value);
+        x.domain(value.map(function(d){
+            return d.GAME_DATE;
+        }));
+        y.domain(d3.extent(value, function(d1) { return d1.PLUS_MINUS; })).nice();
+
+        bar.selectAll(".bar")
+                .data(value)
+                .enter()
+                .append("rect")
+                .attr("x", function(d){return x(d.GAME_DATE)})
+                .attr("y", function(d){return y(Math.max(0,d.PLUS_MINUS))})
+                .attr("width", x.rangeBand())
+                .attr("height", function(d) {return Math.abs(y(d.PLUS_MINUS) - y(0))})
+                .style("fill", function(d){
+                    if (d.PLUS_MINUS < 0) {
+                        return "red";
+                    } else {
+                        return "green";
+                    }
+                });
+        bar.append("g")
+                .attr("class", "x axis")
+                .style("stroke", "1px")
+                .attr("transform", "translate(0," + y(0) + ")")
+                .call(xAxis);
+
+//        bar.append("g")
+//                .attr("class", "y axis")
+//                .call(yAxis);
+        svg.append("g")
+                .attr("class", "brush")
+                .call(d3.svg.brush().x(x)
+                        .on("brushstart", brushstart)
+                        .on("brush", brushmove)
+                        .on("brushend", brushend))
+                .selectAll("rect")
+                .attr("height", height);
+        function brushstart() {
+            bar.classed("selecting", true);
+        }
+
+        function brushmove() {
+            var s = d3.event.target.extent();
+            console.log(s);
+            bar.classed("selected", function(d) { return s[0] <= (d = x(d)) && d <= s[1]; });
+        }
+        function brushend() {
+            bar.classed("selecting", !d3.event.target.empty());
+        }
+
+
     });
     function stopped() {
         if (d3.event.defaultPrevented) {

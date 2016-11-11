@@ -17,11 +17,11 @@
         }
         .selecting path {
             fill-opacity: .2;
+            fill:"grey";
         }
 
-        .selecting path.selected {
-            stroke: #f00;
-            stroke-width: 2px;
+        .selected {
+            fill: "red";
         }
         .brush .extent {
             stroke: #fff;
@@ -235,7 +235,8 @@
                         .on("brush", brushmove)
                         .on("brushend", brushend))
                 .selectAll("rect")
-                .attr("height", height);
+                .attr("y", 500)
+                .attr("height", 200);
         function brushstart() {
             bar.classed("selecting", true);
         }

@@ -15,18 +15,22 @@
         .domain text {
             font: 10px sans-serif;
         }
-        .selecting rect{
-            fill:"black";
+
+        rect {
+            fill-opacity: 0.2;
+            transition: fill-opacity 250ms linear;
         }
-        .selected rect{
-            fill-opacity:1;
+
+        rect.active {
+            fill-opacity: 1;
         }
+
 
 
 
         .brush .extent {
             stroke: #fff;
-            fill-opacity:0;
+            fill-opacity:.123;
             shape-rendering: crispEdges;
         }
 
@@ -233,24 +237,31 @@
         bar.append("g")
                 .attr("class", "brush")
                 .call(d3.svg.brush().x(x)
-                        .on("brushstart", brushstart)
-                        .on("brush", brushmove)
-                        .on("brushend", brushend))
+                        .on("brush", brushmove))
                 .selectAll("rect")
                 .attr("height", 200);
-        function brushstart() {
-            bar.classed("selecting", true);
-        }
 
         function brushmove() {
-            var s = d3.event.target.extent();
-            console.log(s);
-            rectangle.classed("selected", function(d) { console.log(s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]); return s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]; });
+            var s =d3.event.target.extent();
+            if (s == null) {
+                rectangle.classed("active", false);
+            } else {
+                rectangle.classed("active", function(d) { return s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1];});
+            }
         }
-        function brushend() {
-            bar.classed("selecting", !d3.event.target.empty());
-        }
-
+//        function brushstart() {
+//            bar.classed("selecting", true);
+//        }
+//
+//        function brushmove() {
+//            var s = d3.event.target.extent();
+//            console.log(s);
+//            rectangle.classed("selected", function(d) { console.log(s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]); return s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]; });
+//        }
+//        function brushend() {
+//            bar.classed("selecting", !d3.event.target.empty());
+//        }
+//
 
     });
     function stopped() {

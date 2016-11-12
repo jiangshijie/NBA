@@ -17,12 +17,17 @@
         }
 
         rect {
-            fill-opacity: 0.2;
+            fill-opacity: 1;
             transition: fill-opacity 250ms linear;
         }
-
+        rect.unselect{
+            fill-opacity: 0.2;
+        }
         rect.active {
             fill-opacity: 1;
+        }
+        rect.end{
+            fill-opacity:0.123;
         }
 
 
@@ -237,7 +242,8 @@
         bar.append("g")
                 .attr("class", "brush")
                 .call(d3.svg.brush().x(x)
-                        .on("brush", brushmove))
+                        .on("brush", brushmove)
+                        .on("brushend", brushend))
                 .selectAll("rect")
                 .attr("height", 200);
 
@@ -249,10 +255,14 @@
                 rectangle.classed("active", function(d) { return s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1];});
             }
         }
+        function brushend() {
+            var s =d3.event.target.extent();
+            rectangle.classed("end", function(d) { console.log(d.GAME_DATE); return s[0] > x(d.GAME_DATE) && x(d.GAME_DATE) > s[1];})
+        }
 //        function brushstart() {
-//            bar.classed("selecting", true);
+//            rectangle.classed("selecting", true);
 //        }
-//
+
 //        function brushmove() {
 //            var s = d3.event.target.extent();
 //            console.log(s);

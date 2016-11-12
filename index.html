@@ -16,18 +16,12 @@
             font: 10px sans-serif;
         }
 
-        rect {
-            fill-opacity: 1;
-            transition: fill-opacity 250ms linear;
+        .selecting rect {
+            fill-opacity: .2;
         }
-        rect.unselect{
-            fill-opacity: 0.2;
-        }
-        rect.active {
-            fill-opacity: 1;
-        }
-        rect.end{
-            fill-opacity:0.123;
+
+        .selecting rect.selected {
+            fill-opacity:1;
         }
 
 
@@ -247,31 +241,31 @@
                 .selectAll("rect")
                 .attr("height", 200);
 
-        function brushmove() {
-            var s =d3.event.target.extent();
-            if (s == null) {
-                rectangle.classed("active", false);
-            } else {
-                rectangle.classed("active", function(d) { return s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1];});
-            }
-        }
-        function brushend() {
-            var s =d3.event.target.extent();
-            rectangle.classed("end", function(d) { console.log(d.GAME_DATE); return s[0] > x(d.GAME_DATE) && x(d.GAME_DATE) > s[1];})
-        }
-//        function brushstart() {
-//            rectangle.classed("selecting", true);
-//        }
-
 //        function brushmove() {
-//            var s = d3.event.target.extent();
-//            console.log(s);
-//            rectangle.classed("selected", function(d) { console.log(s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]); return s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]; });
+//            var s =d3.event.target.extent();
+//            if (s == null) {
+//                rectangle.classed("unselected", true);
+//            } else {
+//                rectangle.classed("unselected", function(d) { return !(s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]);});
+//            }
 //        }
 //        function brushend() {
-//            bar.classed("selecting", !d3.event.target.empty());
+//            var s =d3.event.target.extent();
+//            rectangle.classed("end", function(d) { console.log(d.GAME_DATE); return s[0] > x(d.GAME_DATE) && x(d.GAME_DATE) > s[1];})
 //        }
-//
+        function brushstart() {
+            rectangle.classed("selecting", true);
+        }
+
+        function brushmove() {
+            var s = d3.event.target.extent();
+            console.log(s);
+            rectangle.classed("selected", function(d) { return s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]; });
+        }
+        function brushend() {
+            bar.classed("selecting", !d3.event.target.empty());
+        }
+
 
     });
     function stopped() {

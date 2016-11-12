@@ -184,7 +184,7 @@
     var x=d3.scale.ordinal().rangeRoundBands([0,900],.2);;
     var y=d3.scale.linear() .range([200, 0]);
     var xAxis = d3.svg.axis().scale(x).tickValues(x.domain()).orient("bottom");
-    //var yAxis = d3.svg.axis().scale(y).orient("left");
+    var yAxis = d3.svg.axis().scale(y).orient("left");
 
 
     d3.csv("data.csv", function(d){
@@ -228,6 +228,11 @@
                 .style("stroke", "1px")
                 .attr("transform", "translate(0," + y(0) + ")")
                 .call(xAxis);
+        bar.append("g")
+                .attr("class", "y axis")
+                .style("stroke", "1px")
+                .attr("transform", "translate(0, 0)")
+                .call(yAxis);
 
 
 //        bar.append("g")
@@ -241,21 +246,7 @@
                 .selectAll("rect")
                 .attr("height", 200);
 
-//        function brushmove() {
-//            var s =d3.event.target.extent();
-//            if (s == null) {
-//                rectangle.classed("unselected", true);
-//            } else {
-//                rectangle.classed("unselected", function(d) { return !(s[0] <= x(d.GAME_DATE) && x(d.GAME_DATE) <= s[1]);});
-//            }
-//        }
-//        function brushend() {
-//            var s =d3.event.target.extent();
-//            rectangle.classed("end", function(d) { console.log(d.GAME_DATE); return s[0] > x(d.GAME_DATE) && x(d.GAME_DATE) > s[1];})
-//        }
-        function brushstart() {
-            rectangle.classed("selecting", true);
-        }
+
 
         function brushmove() {
             var s = d3.event.target.extent();

@@ -315,8 +315,6 @@
 
     	//code from cinnamon
 
-    		console.log(margin);
-
     		var margin = {top: 100, right: 100, bottom: 100, left: 100},
 				width = Math.min(500, window.innerWidth - 10) - margin.left - margin.right,
 				height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
@@ -337,6 +335,8 @@
 			};
 			//Call function to draw the Radar chart
 			RadarChart(".radarChart", data, radarChartOptions);
+                        
+
 
 			function RadarChart(id, data, options) {
 	var cfg = {
@@ -388,7 +388,8 @@
 	//		.attr("width",  cfg.w + cfg.margin.left + cfg.margin.right)
 	//		.attr("height", cfg.h + cfg.margin.top + cfg.margin.bottom)
 	//		.attr("class", "radar"+id);
-	//Append a g element		
+	//Append a g element
+    //这里修改了一下，直接在同一个svg上画雷达图		
 	var g = svg.append("g")
 			.attr("transform", "translate(" + (cfg.w/2 + cfg.margin.left+700) + "," + (cfg.h/2 + cfg.margin.top) + ")");
 	
